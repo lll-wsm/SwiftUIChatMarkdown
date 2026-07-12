@@ -189,11 +189,10 @@ public enum ChatMarkdownPreprocessor {
     }
 
     private static func normalize(_ raw: String) -> String {
-//        var output = raw
-//        output = output.replacingOccurrences(of: "\r\n", with: "\n")
-//        output = output.replacingOccurrences(of: "\n\n\n", with: "\n\n")
-//        output = output.replacingOccurrences(of: "\n\n\n", with: "\n\n")
-//        return output.trimmingCharacters(in: .whitespacesAndNewlines)
-        return raw
+        var output = raw
+        output = output.replacingOccurrences(of: "\r\n", with: "\n")
+        output = output.replacingOccurrences(of: "\n\n\n", with: "\n\n")
+        output = output.replacingOccurrences(of: "\n\n\n", with: "\n\n")
+        return output.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }
