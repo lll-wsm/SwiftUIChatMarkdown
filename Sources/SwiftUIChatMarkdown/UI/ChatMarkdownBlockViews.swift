@@ -333,7 +333,7 @@ public struct ChatMarkdownRenderer: View {
                 .tint(self.linkColor)
                 .textSelection(.enabled)
                 .lineSpacing(4)
-                .padding(.top, level == 1 ? 16 : 8)
+                .padding(.top, level == 1 ? 20 : 12)
                 .padding(.bottom, 4)
         case let .blockquote(prose):
             HStack(spacing: 0) {
@@ -352,29 +352,29 @@ public struct ChatMarkdownRenderer: View {
             .background(theme.codeBackgroundColor.opacity(0.2))
             .clipShape(RoundedRectangle(cornerRadius: 4))
         case let .list(_, items):
-            VStack(alignment: .leading, spacing: 8) {
-                ForEach(items.indices, id: \.self) { idx in
-                    let item = items[idx]
-                    HStack(alignment: .top, spacing: 8) {
-                        Text(item.bullet)
-                            .font(theme.monoFont)
-                            .foregroundStyle(theme.accentColor)
-                        
+            ChatNestedListView(
+                nodes: ChatNestedListView.buildTree(from: items),
+                theme: theme,
+                rowContent: { item in
+                    AnyView(
                         self.proseText(item.prose, index: index)
                             .foregroundStyle(theme.textColor)
                             .tint(self.linkColor)
                             .textSelection(.enabled)
                             .lineSpacing(4)
-                    }
-                    .padding(.leading, CGFloat(item.indentLevel) * 16)
-                }
-            }
+                    )
+                })
+            .padding(.vertical, 2)
+            .padding(.leading, 16)
         case let .code(code):
             ChatCodeBlockView(block: code, theme: theme)
         case let .math(math):
             ChatMathBlockView(block: math, theme: theme)
         case let .table(table):
             ChatMarkdownTableView(table: table, theme: theme)
+        case .thematicBreak:
+            Divider()
+                .padding(.vertical, 4)
         }
     }
 
@@ -404,6 +404,62 @@ public struct ChatMarkdownRenderer: View {
 
     private var linkColor: Color {
         self.context == .user ? theme.textColor : theme.accentColor
+    }
+}
+
+/// Renders a (possibly nested) list as a tree, drawing one continuous guide
+/// line per nesting level so depth is legible at a glance.
+@MainActor
+private struct ChatNestedListView: View {
+    final class Node: Identifiable {
+        let id = UUID()
+        let item: ChatMarkdownListItem
+        var children: [Node] = []
+        init(item: ChatMarkdownListItem) { self.item = item }
+    }
+
+    let nodes: [Node]
+    let theme: SDKMarkdownTheme
+    let rowContent: (ChatMarkdownListItem) -> AnyView
+
+    /// Rebuilds the flat `indentLevel`-tagged item list into a tree so each
+    /// level can draw its own continuous guide line.
+    static func buildTree(from items: [ChatMarkdownListItem]) -> [Node] {
+        var roots: [Node] = []
+        var stack: [Node] = []
+        for item in items {
+            let node = Node(item: item)
+            while stack.count > item.indentLevel {
+                stack.removeLast()
+            }
+            if let parent = stack.last {
+                parent.children.append(node)
+            } else {
+                roots.append(node)
+            }
+            stack.append(node)
+        }
+        return roots
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            ForEach(nodes) { node in
+                HStack(alignment: .top, spacing: 8) {
+                    Text(node.item.bullet)
+                        .font(theme.monoFont)
+                        .foregroundStyle(theme.accentColor)
+                    rowContent(node.item)
+                }
+                if !node.children.isEmpty {
+                    ChatNestedListView(
+                        nodes: node.children,
+                        theme: theme,
+                        rowContent: rowContent)
+                        .padding(.leading, 20)
+                }
+            }
+        }
     }
 }
 
@@ -462,6 +518,8 @@ public struct ChatMarkdownRenderSnapshot {
                 .math(math)
             case let .table(table):
                 .table(table)
+            case .thematicBreak:
+                .thematicBreak
             }
         }
         self.images = processed.images
@@ -499,6 +557,7 @@ public enum ChatMarkdownRenderedBlock {
     case code(ChatCodeBlock)
     case math(ChatMathBlock)
     case table(ChatMarkdownTable)
+    case thematicBreak
 }
 
 @MainActor

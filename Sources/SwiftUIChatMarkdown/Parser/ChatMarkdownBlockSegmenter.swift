@@ -23,6 +23,7 @@ public enum ChatMarkdownBlock: Equatable, Sendable {
     case code(ChatCodeBlock)
     case math(ChatMathBlock)
     case table(ChatMarkdownTable)
+    case thematicBreak
 }
 
 public struct ChatCodeBlock: Equatable, Sendable {
@@ -110,6 +111,11 @@ public enum ChatMarkdownBlockSegmenter {
         for child in document.children {
             guard let lineRange = source.lineRange(for: child.range) else { continue }
             if mathResult.protectedRanges.contains(where: { $0.contains(lineRange.lowerBound) }) {
+                continue
+            }
+
+            if child is Markdown.ThematicBreak {
+                extractions.append(Extraction(lineRange: lineRange, block: .thematicBreak))
                 continue
             }
 
@@ -238,7 +244,7 @@ public enum ChatMarkdownBlockSegmenter {
                     }
                 }
                 
-                let bullet = (list is Markdown.OrderedList) ? "\(index)." : "•"
+                let bullet = Self.bullet(ordered: list is Markdown.OrderedList, index: index, indentLevel: indentLevel)
                 if list is Markdown.OrderedList {
                     index += 1
                 }
@@ -250,6 +256,42 @@ public enum ChatMarkdownBlockSegmenter {
             }
         }
         return result
+    }
+
+    /// Level-aware list bullet. Unordered rotates `•`/`◦`/`▪`; ordered rotates
+    /// `1.`/`a.`/`i.` so nested list levels stay visually distinct.
+    private static func bullet(ordered: Bool, index: Int, indentLevel: Int) -> String {
+        if ordered {
+            switch indentLevel % 3 {
+            case 1: return "\(Self.lowercaseLetter(index))."
+            case 2: return "\(Self.lowercaseRoman(index))."
+            default: return "\(index)."
+            }
+        } else {
+            return ["•", "◦", "▪"][indentLevel % 3]
+        }
+    }
+
+    private static func lowercaseLetter(_ index: Int) -> String {
+        guard index >= 1, index <= 26,
+              let base = Character("a").asciiValue
+        else { return "\(index)" }
+        return String(UnicodeScalar(base + UInt8(index - 1)))
+    }
+
+    private static func lowercaseRoman(_ number: Int) -> String {
+        guard number > 0 else { return "\(number)" }
+        let pairs: [(Int, String)] = [
+            (10, "x"), (9, "ix"), (5, "v"), (4, "iv"), (1, "i")]
+        var n = number
+        var result = ""
+        for (value, symbol) in pairs {
+            while n >= value {
+                result += symbol
+                n -= value
+            }
+        }
+        return result.isEmpty ? "\(number)" : result
     }
 
     private static func stripHeaderMarkers(_ text: String) -> String {
