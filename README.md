@@ -1,6 +1,6 @@
 # SwiftUIChatMarkdown
 
-SwiftUIChatMarkdown 是一个专为 **AI 聊天/对话场景优化** 的 SwiftUI Markdown 渲染库。它不仅支持标准的 Markdown 语法，还集成了流式打机效果、数学公式渲染 (LaTeX)、Mermaid 关系图渲染以及基于 SQLite 的对话历史本地持久化缓存。
+SwiftUIChatMarkdown 是一个专为 **AI 聊天/对话场景优化** 的 SwiftUI Markdown 渲染库。它不仅支持标准的 Markdown 语法，还集成了流式打字机效果、数学公式渲染 (LaTeX)、Mermaid 关系图渲染以及基于 SQLite 的对话历史本地持久化缓存。
 
 ## 🌟 核心特性
 
