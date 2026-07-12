@@ -54,6 +54,7 @@ class MyChatDataSource: ChatSessionDataSource, @unchecked Sendable {
 在您的 View 中初始化 `ChatSessionEngine`，并将其传给 `ChatSessionView`：
 
 ```swift
+@MainActor
 struct ChatRoomView: View {
     @State private var engine: ChatSessionEngine
     
