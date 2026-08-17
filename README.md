@@ -21,14 +21,16 @@ SwiftUIChatMarkdown 是一个专为 **AI 聊天/对话场景优化** 的 SwiftUI
 ## 📦 安装指南 (SPM)
 
 在 Xcode 项目中，选择 `File -> Add Package Dependencies`，并输入本项目仓库地址：
-`https://github.com/openclaw/SwiftUIChatMarkdown`
+`https://github.com/lll-wsm/SwiftUIChatMarkdown`
 
 或者在您的 `Package.swift` 中添加依赖：
 ```swift
 dependencies: [
-    .package(url: "https://github.com/openclaw/SwiftUIChatMarkdown", exact: "1.0.0")
+    .package(url: "https://github.com/lll-wsm/SwiftUIChatMarkdown", branch: "main")
 ]
 ```
+
+> 发布稳定版本后，可改为版本号引用（如 `exact: "1.0.0"`）。
 
 ## 🚀 快速开始
 
@@ -118,6 +120,16 @@ Sources/SwiftUIChatMarkdown/
     ├── ChatCodeHighlighter.swift # 语法高亮器
     └── ChatInlineMath.swift      # LaTeX 公式高亮和识别
 ```
+
+## 🧩 第三方开源依赖
+
+本项目基于以下优秀的开源项目构建（详见 `Package.swift`）：
+
+| 依赖 | 说明 |
+| --- | --- |
+| [swift-markdown](https://github.com/swiftlang/swift-markdown) | Apple 官方的 Markdown 解析器，基于 CommonMark 规范 |
+| [SwiftMath](https://github.com/mgriebling/SwiftMath) | LaTeX 数学公式渲染引擎 |
+| [beautiful-mermaid-swift](https://github.com/lukilabs/beautiful-mermaid-swift) | Mermaid 图表渲染库 |
 
 ## 📄 许可证
 
