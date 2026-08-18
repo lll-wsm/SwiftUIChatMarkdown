@@ -13,8 +13,8 @@ SwiftUIChatMarkdown 是一个专为 **AI 聊天/对话场景优化** 的 SwiftUI
 
 ## 🛠 环境要求
 
-- **iOS 18.0+**
-- **macOS 15.0+**
+- **iOS 17.0+**
+- **macOS 14.0+**
 - **Xcode 16.0+**
 - **Swift 6.0**
 

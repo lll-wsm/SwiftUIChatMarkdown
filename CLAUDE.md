@@ -15,7 +15,7 @@ swift test --filter ParserTests                      # run one test class
 swift test --filter ParserTests/testPreprocessorInlineImage   # run one test
 ```
 
-- Swift 6.0 tools version (toolchain 6.2.4 works); platforms: iOS 18+, macOS 15+.
+- Swift 6.0 tools version (toolchain 6.2.4 works); platforms: iOS 17+, macOS 14+.
 - Tests run on macOS host by default. UI-layer types are `@MainActor`; test files use `@MainActor` test methods where needed.
 - There is no linter/formatter configured; match the existing style (4-space indent, no semicolons).
 
