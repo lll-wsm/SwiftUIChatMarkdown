@@ -26,11 +26,9 @@ SwiftUIChatMarkdown 是一个专为 **AI 聊天/对话场景优化** 的 SwiftUI
 或者在您的 `Package.swift` 中添加依赖：
 ```swift
 dependencies: [
-    .package(url: "https://github.com/lll-wsm/SwiftUIChatMarkdown", branch: "main")
+    .package(url: "https://github.com/lll-wsm/SwiftUIChatMarkdown", from: "1.0.0")
 ]
 ```
-
-> 发布稳定版本后，可改为版本号引用（如 `exact: "1.0.0"`）。
 
 ## 🚀 快速开始
 
